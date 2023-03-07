@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+SERVER_CPU = 1
+SERVER_MEMORY = 1024
+IP = "10.0.0.10"
+Vagrant.configure("2") do |config|
+  config.vm.define 'lb' do |lb|
+    lb.vm.box = "ubuntu/xenial64"
+    lb.vm.network "private_network", ip:IP
+    lb.vm.provision :ansible_local do |ansible|
+      ansible.playbook = "playbook.yml"
+      ansible.install = true
+      ansible_install_mode = "pip"
+      ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/pip/3.5/get-pip.py | sudo python"
+    end
+  end
+
+  config.vm.provider 'virtualbox' do |v|
+    v.cpus = SERVER_CPU
+    v.memory = SERVER_MEMORY
+  end
+end
